@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session, flash
 app = Flask(__name__)
+app.secret_key = 'secretKey'
 
 @app.route('/')
 def root():
@@ -14,10 +15,23 @@ def gohome():
 def user_data():
     print 'received the post data!'
 
-    fname = request.form['fname']
+    if len(request.form['fname']) < 1:
+        flash('Name cannot be empty!')
+        return redirect('/')
+    else:
+        fname = request.form['fname']
+        
     location = request.form['location']
     language = request.form['language']
-    comment = request.form['desc']
+    
+    if len(request.form['desc']) < 1:
+        flash('Comment cannot be empty!')
+        return redirect('/')
+    elif len(request.form['desc']) > 120:
+        flash('Comment cannot be more than 120 characters!')
+        return redirect('/')
+    else:
+        comment = request.form['desc']
 
     print fname, location, language, comment
 
